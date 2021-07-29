@@ -1,30 +1,9 @@
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]
+import aneService from '../services/anecdotes'
 
-const getId = () => (100000 * Math.random()).toFixed(0)
-
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-
-const initialState = anecdotesAtStart.map(asObject)
-
-const aneReducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+const aneReducer = (state = [], action) => {
   switch (action.type) {
     case 'VOTE': {
-      const id = action.data.id
+      const id = action.data
       const addVote = state.find(n => n.id === id)
       const changeVote = {
         ...addVote,
@@ -34,28 +13,42 @@ const aneReducer = (state = initialState, action) => {
         anecdote.id !== id ? anecdote : changeVote)
     }
     case 'NEW_ANE': {
-      const newAne = {
-        content: action.data.ane,
-        id: getId(),
-        votes: 0
-      }
-      return state.concat(newAne)
+      return state.concat(action.data)
     }
+    case 'INIT_ANE':
+      return action.data
 
   }
   return state
 }
 export const newAnecdote = (ane) => {
-  return {
-    type: 'NEW_ANE',
-    data: { ane }
+  return async dispatch => {
+    const newAne = await aneService.createNew(ane)
+    dispatch({
+      type: 'NEW_ANE',
+      data: newAne
+    })
   }
 }
 
-export const votes = (id) => {
-  return {
-    type: 'VOTE',
-    data: { id }
+
+export const votes = (ane) => {
+  return async dispatch => {
+    const newVote = await aneService.newVote(ane)
+    dispatch({
+      type: 'VOTE',
+      data: newVote.id
+    })
+
+  }
+}
+export const initializeAne = () => {
+  return async dispatch => {
+    const ane = await aneService.getAll()
+    dispatch({
+      type: 'INIT_ANE',
+      data: ane
+    })
   }
 }
 

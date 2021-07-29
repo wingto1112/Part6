@@ -1,38 +1,24 @@
-const init = null
-const notiReducer = (state = init, action) => {
-    console.log('state now: ', state)
-    console.log('action', action)
+let timout
+const notiReducer = (state = null, action) => {
     switch (action.type) {
-        case 'VOTE2': {
-            const voteState = `you voted '${action.data}'`
-            return voteState
-        }
-        case 'ADD': {
-            const addState = `you added '${action.data}'`
-            return addState
-        }
-        case 'ZERO': return init
+        case 'NOTI': return action.data
     }
     return state
 }
-
-export const voteNoti = (anecdote) => {
-    return {
-        type: 'VOTE2',
-        data: anecdote
-    }
-}
-
-export const addNoti = (addAne) => {
-    return {
-        type: 'ADD',
-        data: addAne
-    }
-}
-
-export const zero = () => {
-    return {
-        type: 'ZERO'
+export const setNoti = (message, time) => {
+    
+    return async dispatch => {
+        dispatch({
+            type: 'NOTI',
+            data: message
+        })
+        clearTimeout(timout)
+        timout = setTimeout(() =>
+            dispatch({
+                type: 'NOTI',
+                data: null
+            }), time * 1000)
+        
     }
 }
 

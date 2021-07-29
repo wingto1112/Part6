@@ -1,17 +1,12 @@
 const initState = ''
 const filterReducer = (state = initState, action) => {
-    console.log('state now: ', state)
-    console.log('action', action)
-    switch (action.type){
-        case 'FILTER': {
-            const newFilter = action.data
-            return newFilter
-        }
+    switch (action.type) {
+        case 'FILTER': return action.data
     }
     return state
 }
 export const filterChange = (value) => {
-    return{
+    return {
         type: 'FILTER',
         data: value
     }

@@ -1,17 +1,20 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+//import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { newAnecdote } from '../reducers/anecdoteReducer'
-import { addNoti, zero } from '../reducers/notificationReducer'
+import { setNoti } from '../reducers/notificationReducer'
 
 const AnecdoteForm = (props) => {
-    const dispatch = useDispatch()
+    //const dispatch = useDispatch()
 
-    const newAne = (e) => {
+    const newAne = async (e) => {
         e.preventDefault()
-        dispatch(newAnecdote(e.target.ane.value))
-        dispatch(addNoti(e.target.ane.value))
+        const content = e.target.ane.value
         e.target.ane.value = ''
-        setTimeout(() => dispatch(zero()), 5000)
+        //dispatch(newAnecdote(content))
+        //dispatch(setNoti(`you added '${content}'`, 5))
+        props.newAnecdote(content)
+        props.setNoti(`you added '${content}'`, 5)
     }
     return (
         <>
@@ -24,4 +27,7 @@ const AnecdoteForm = (props) => {
     )
 }
 
-export default AnecdoteForm
+export default connect(
+    null,
+    { newAnecdote, setNoti }
+)(AnecdoteForm)
